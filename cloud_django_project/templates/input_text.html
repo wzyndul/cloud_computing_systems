@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Wprowadź Tekst</title>
+</head>
+<body>
+    <h1>Wprowadź Tekst</h1>
+    <form method="post">
+        {% csrf_token %}
+        <label for="user_text">Wprowadź tekst:</label>
+        <input type="text" id="user_text" name="user_text">
+        <br>
+        <input type="submit" value="Wyślij">
+    </form>
+</body>
+</html>
