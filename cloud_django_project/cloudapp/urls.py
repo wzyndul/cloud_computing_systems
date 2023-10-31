@@ -19,5 +19,6 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('', views.home, name='home'),  # Make the input_text view the default page
+    path('', views.register_user, name='register_user'),
+    path('success/', views.success_page, name='success_page'),
 ]
