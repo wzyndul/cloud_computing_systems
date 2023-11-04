@@ -1,4 +1,4 @@
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.contrib import messages
@@ -66,8 +66,18 @@ def login_user(request):
             messages.error(request, "Invalid username or password.")
 
     elif request.method == 'GET':
+        if request.user.is_authenticated:
+            messages.info(request, f"You are already logged in as {request.user.username}.")
+            return redirect('success_page')
+
         form = UserLoginForm()
         return render(request, 'login.html', {'login_form': form})
+
+
+def logout_user(request):
+    logout(request)
+    messages.info(request, "You have successfully logged out.")
+    return redirect('index_page')
 
 
 def success_page(request):

@@ -1,14 +1,11 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>List of Users</title>
-</head>
-<body>
+{% extends "base.html" %}
+{% block title %}List of Users{% endblock %}
+
+{% block content %}
     <h1>List of Users</h1>
     <ul>
         {% for user in users %}
             <li>{{ user.username }}</li>
         {% endfor %}
     </ul>
-</body>
-</html>
+{% endblock %}
