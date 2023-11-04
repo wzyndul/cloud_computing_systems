@@ -1,17 +1,19 @@
 from django import forms
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
 
-class UserRegistrationForm(forms.ModelForm):
+class UserRegistrationForm(UserCreationForm):
     username = forms.CharField()
     email = forms.EmailField(required=True)
-    password = forms.CharField(widget=forms.PasswordInput)
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'password']
+        fields = ['username', 'email', 'password1', 'password2']
 
-    # not yet sure what these are doing
+    # not yet sure what these are doing but
+
+    # Preventing duplicate emails
     def clean_email(self):
         email = self.cleaned_data.get('email')
         username = self.cleaned_data.get('username')
@@ -21,6 +23,7 @@ class UserRegistrationForm(forms.ModelForm):
 
         return email
 
+    # Overriding the default save method to save the email
     def save(self, commit=True):
         user = super(UserRegistrationForm, self).save(commit=False)
         user.email = self.cleaned_data['email']
@@ -35,7 +38,7 @@ class UserLoginForm(forms.Form):
     username = forms.CharField()
     password = forms.CharField(widget=forms.PasswordInput)
 
-    class Meta:
-        model = User
-        fields = ['username', 'password']
+    # class Meta:
+    #     model = User
+    #     fields = ['username', 'password']
 

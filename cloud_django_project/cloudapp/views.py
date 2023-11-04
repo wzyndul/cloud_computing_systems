@@ -6,27 +6,6 @@ from django.contrib import messages
 from cloud_django_project.forms import UserRegistrationForm, UserLoginForm
 
 
-# def register_user(request):
-#     if request.method == 'POST':
-#         form = UserRegistrationForm(request.POST)
-#         if form.is_valid():
-#             if 'login' in request.POST:
-#                 username = request.POST['username']
-#                 password = request.POST['password']
-#                 user = authenticate(username=username, password=password)
-#                 if user:
-#                     return redirect('success_page')
-#                 else:
-#                     return HttpResponse('Invalid login credentials')
-#
-#             elif 'register' in request.POST:
-#                 form.save()  # This will create a new user
-#                 # Redirect the user to a success page or any other appropriate action
-#                 return redirect('success_page')
-#     else:
-#         form = UserRegistrationForm()
-#     return render(request, 'register.html', {'form': form})
-
 # Main page
 def index_page(request):
     return render(request, 'index.html')
@@ -38,9 +17,11 @@ def register_user(request):
         form = UserRegistrationForm(request.POST)
 
         if form.is_valid():
-            user = form.save()
-            login(request, user)
+            user = form.save(commit=False)
+            user.username = user.username.lower()
+            user.save()
             messages.success(request, 'Registration successful.')
+            login(request, user)
             return redirect('index_page')
 
         else:
@@ -61,15 +42,13 @@ def login_user(request):
             user = authenticate(username=username, password=password)
 
             if user:
-                login(request, user)
                 messages.success(request, f"You are now logged in as {username}.")
+                login(request, user)
                 return redirect('index_page')
             else:
-                print("No such user")
                 messages.error(request, "Invalid username or password.")
 
         else:
-            print("Invalid form")
             messages.error(request, "Invalid username or password.")
 
     elif request.method == 'GET':
