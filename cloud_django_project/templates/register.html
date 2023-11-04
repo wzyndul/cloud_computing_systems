@@ -1,9 +1,9 @@
-
 {% block content %}
-  <h2>Register</h2>
+  <h2>Welcome</h2>
   <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Register</button>
+    <button type="submit" name="login">Login</button>
+    <button type="submit" name="register">Register</button>
   </form>
 {% endblock %}

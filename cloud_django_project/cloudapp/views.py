@@ -10,12 +10,21 @@ def register_user(request):
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
-            form.save()  # This will create a new user
-            # Redirect the user to a success page or any other appropriate action
-            return redirect('success_page')
+            if 'login' in request.POST:
+                username = request.POST['username']
+                password = request.POST['password']
+                user = authenticate(username=username, password=password)
+                if user:
+                    return redirect('success_page')
+                else:
+                    return HttpResponse('Invalid login credentials')
+
+            elif 'register' in request.POST:
+                form.save()  # This will create a new user
+                # Redirect the user to a success page or any other appropriate action
+                return redirect('success_page')
     else:
         form = UserRegistrationForm()
-    users = User.objects.all()
     return render(request, 'register.html', {'form': form})
 
 
