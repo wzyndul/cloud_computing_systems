@@ -9,7 +9,7 @@ from django.contrib.auth.models import User
 #         model = User
 #         fields = ['username', 'password']
 
-class UserRegistrationForm(forms.Form):
+class UserRegistrationForm(forms.ModelForm):
     username = forms.CharField()
     email = forms.EmailField(required=True)
     password = forms.CharField(widget=forms.PasswordInput)

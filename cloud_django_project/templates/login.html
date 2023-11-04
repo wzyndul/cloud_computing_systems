@@ -8,5 +8,12 @@
         {{ login_form.as_p }}
         <button type="submit" name="register">Login</button>
     </form>
+
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+    {% endfor %}
+
     <p class="text-center">Don't have an account? <a href="/register">Create one</a>.</p>
 {% endblock %}

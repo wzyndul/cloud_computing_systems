@@ -39,7 +39,8 @@ def register_user(request):
             login(request, user)
             messages.success(request, 'Registration successful.')
             return redirect('success_page')
-        messages.error(request, 'Unsuccessful registration. Invalid information.')
+        else:
+            messages.error(request, 'Unsuccessful registration. Invalid information.')
     form = UserRegistrationForm()
     return render(request, 'register.html', {'register_form': form})
 
@@ -53,16 +54,13 @@ def login_user(request):
             user = authenticate(username=username, password=password)
 
             if user:
-                print(f"User authenticated: {user.username}")
                 login(request, user)
                 messages.info(request, f"You are now logged in as {username}.")
                 return redirect('success_page')
             else:
-                print(f"User not authenticated: {user.username}")
                 messages.error(request, "Invalid username or password.")
 
         else:
-            print("Idk what happened")
             messages.error(request, "Invalid username or password.")
 
     elif request.method == 'GET':
