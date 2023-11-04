@@ -1,13 +1,12 @@
 {% extends "base.html" %}
-{% block title %}Register{% endblock %}
-{% load crispy_forms_tags %}
+{% block title %}Login{% endblock %}
 
 {% block content %}
-    <h2>Register</h2>
+    <h2>Login</h2>
     <form method="post">
         {% csrf_token %}
-        {{ register_form.as_p }}
-        <button type="submit" name="register">Register</button>
+        {{ login_form.as_p }}
+        <button type="submit" name="register">Login</button>
     </form>
 
     {% for message in messages %}
@@ -16,6 +15,5 @@
         </div>
     {% endfor %}
 
-    <p>If you already have an account, <a href="/login">login</a> instead.</p>
+    <p class="text-center">Don't have an account? <a href="/register">Create one</a>.</p>
 {% endblock %}
-
