@@ -3,11 +3,23 @@
 
 {% block content %}
     {% if request.user.is_authenticated %}
-        <span>Welcome, {{ request.user.username | title }}!</span>
-        <a href="/logout">Logout</a>
+        <h2 class="text-center">Welcome, {{ request.user.username | title }}!</h2>
+        <div class="text-center">
+            <a class="btn btn-primary" href="{% url 'logout_user' %}">Logout</a>
+        </div>
     {% else %}
-        <a href="/login">Login</a>
-        <a href="/register">Register</a>
+        <h2 class="text-center">Welcome!</h2>
+        <div class="text-center">
+            <a class="btn btn-outline-danger" href="{% url 'login_user' %}">Login</a>
+            <a class="btn btn-outline-primary" href="{% url 'register_user' %}">Register</a>
+        </div>
     {% endif %}
+    <div class="text-center">
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
 {% endblock %}
 ```
