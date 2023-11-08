@@ -81,8 +81,15 @@ WSGI_APPLICATION = 'cloud_django_project.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'mssql',
+        'NAME': 'cloudapp',
+        'USER': 'cloudapp',
+        'PASSWORD': '5Sv^44P]d4',
+        'HOST': 'cloudappdjango.database.windows.net',
+        'PORT': '1433',
+        'OPTIONS': {
+            'driver': 'ODBC Driver 17 for SQL Server',
+        },
     }
 }
 
