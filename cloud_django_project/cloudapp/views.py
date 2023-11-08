@@ -4,6 +4,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 
 from cloud_django_project.forms import UserRegistrationForm, UserLoginForm
+from cloudapp import blob_handler
 
 
 # Main page
@@ -20,6 +21,7 @@ def register_user(request):
             user = form.save(commit=False)
             user.username = user.username.lower()
             user.save()
+            blob_handler.create_blob_container(user)
             messages.success(request, 'Registration successful.')
             login(request, user)
             return redirect('index_page')
