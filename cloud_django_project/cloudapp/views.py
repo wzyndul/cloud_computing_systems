@@ -84,9 +84,14 @@ def storage(request):
     if request.method == 'GET':
         blobs = blob_handler.list_blobs(request.user)
         return render(request, 'storage.html', {'blobs': blobs})
+
     if request.method == 'POST':
-        uploaded_file = request.FILES['to_send']
-        blob_handler.upload_blob(request.user, uploaded_file)
-        messages.success(request, 'File uploaded successfully.')
+        uploaded_files = request.FILES.getlist('files')
+
+        for uploaded_file in uploaded_files:
+            blob_handler.upload_blob(request.user, uploaded_file)
+
+        messages.success(request, f'{len(uploaded_files)} file(s) uploaded successfully.')
         return redirect('storage')
+
     return render(request, 'storage.html')

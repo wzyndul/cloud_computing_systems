@@ -1,53 +1,40 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="text-center">
-    <h2>Stored Files:</h2>
+  <h2 class="text-center mb-4">Stored Files</h2>
     {% if blobs %}
         <table class="table">
             <thead>
                 <tr>
                     <th scope="col">File Name</th>
-                    <th scope="col">Actions</th>
                 </tr>
             </thead>
             <tbody>
                 {% for blob in blobs %}
                     <tr>
                         <td>{{ blob.name }}</td>
-                        <td>
-                            <form method="POST" action="{% url 'storage' %}" class="delete-form">
-                                {% csrf_token %}
-                                <input type="hidden" name="_method" value="DELETE">
-                                <input type="hidden" name="blob_name" value="{{ blob.name }}">
-                                <button type="button" class="btn btn-danger" onclick="deleteBlob(this)">Delete</button>
-                            </form>
-                        </td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
     {% else %}
-        <p>No files available.</p>
+        <p class="text-center">No files available.</p>
     {% endif %}
-    </div>
 
-    <h3>Upload</h3>
-    <form method="POST" enctype="multipart/form-data" action="{% url 'storage' %}">
-        {% csrf_token %}
-        <input type="file" name="to_send" id="fileInput" multiple>
-        <button id="uploadButton" type="submit" disabled class="btn btn-primary">Upload</button>
-    </form>
+    <h3 class="mt-4">Upload</h3>
+<form method="POST" enctype="multipart/form-data" action="{% url 'storage' %}">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label for="fileInput" class="form-label">Select File(s):</label>
+        <input type="file" name="files" id="fileInput" class="form-control" multiple>
+    </div>
+    <button id="uploadButton" type="submit" disabled class="btn btn-primary">Upload</button>
+</form>
 
     <script>
         document.getElementById('fileInput').addEventListener('change', function () {
             var uploadButton = document.getElementById('uploadButton');
             uploadButton.disabled = this.files.length === 0;
         });
-
-        function deleteBlob(button) {
-            var form = button.closest('.delete-form');
-            form.submit();
-        }
     </script>
 {% endblock %}
