@@ -6,6 +6,7 @@
         <h2 class="text-center">Welcome, {{ request.user.username | title }}!</h2>
         <div class="text-center">
             <a class="btn btn-primary" href="{% url 'logout_user' %}">Logout</a>
+            <a class="btn btn-outline-primary" href="{% url 'upload_file' %}">add file</a>
         </div>
     {% else %}
         <h2 class="text-center">Welcome!</h2>

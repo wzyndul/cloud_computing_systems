@@ -27,7 +27,8 @@ def register_user(request):
             return redirect('index_page')
 
         else:
-            messages.error(request, 'Unsuccessful registration. Invalid information.')
+            messages.error(request,
+                           'Unsuccessful registration. Invalid information.')
 
     form = UserRegistrationForm()
     return render(request, 'register.html', {'register_form': form})
@@ -44,7 +45,8 @@ def login_user(request):
             user = authenticate(username=username, password=password)
 
             if user:
-                messages.success(request, f"You are now logged in as {username}.")
+                messages.success(request,
+                                 f"You are now logged in as {username}.")
                 login(request, user)
                 return redirect('index_page')
             else:
@@ -55,7 +57,8 @@ def login_user(request):
 
     elif request.method == 'GET':
         if request.user.is_authenticated:
-            messages.success(request, f"You are already logged in as {request.user.username}.")
+            messages.success(request,
+                             f"You are already logged in as {request.user.username}.")
             return redirect('index_page')
 
     form = UserLoginForm()
@@ -72,3 +75,7 @@ def logout_user(request):
 def success_page(request):
     users = User.objects.all()  # Retrieve all users
     return render(request, 'success.html', {'users': users})
+
+
+def upload_file(request):
+    return render(request, 'upload.html')
