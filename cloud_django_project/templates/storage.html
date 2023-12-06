@@ -30,7 +30,11 @@
     </div>
     <button id="uploadButton" type="submit" disabled class="btn btn-primary">Upload</button>
 </form>
-
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
     <script>
         document.getElementById('fileInput').addEventListener('change', function () {
             var uploadButton = document.getElementById('uploadButton');
@@ -38,3 +42,5 @@
         });
     </script>
 {% endblock %}
+
+
