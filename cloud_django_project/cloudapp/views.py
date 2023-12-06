@@ -79,3 +79,10 @@ def success_page(request):
 
 def upload_file(request):
     return render(request, 'upload.html')
+
+def upload_file(request):
+    if request.method == 'POST':
+        uploaded_file = request.FILES['to_send']
+        blob_handler.upload_blob(request.user, uploaded_file)
+        return redirect('success_page')
+    return render(request, 'upload.html')
