@@ -10,7 +10,7 @@ def create_blob_container(user):
         container_client.create_container()
 
 
-def upload_blob(user,file): # container_name = nazwa uzytkownika, trzeba to jakos lepiej ogarnac
+def upload_blob(user, file): # container_name = nazwa uzytkownika, trzeba to jakos lepiej ogarnac
     blob_service_client = BlobServiceClient.from_connection_string(settings.AZURE_STORAGE_CONNECTION_STRING)
     container_client = blob_service_client.get_container_client(user.username.lower())
 
@@ -19,3 +19,9 @@ def upload_blob(user,file): # container_name = nazwa uzytkownika, trzeba to jako
     blob_client.upload_blob(file, overwrite=True)
 
 
+def list_blobs(user):
+    blob_service_client = BlobServiceClient.from_connection_string(settings.AZURE_STORAGE_CONNECTION_STRING)
+    container_client = blob_service_client.get_container_client(user.username.lower())
+
+    blob_list = container_client.list_blobs()
+    return blob_list

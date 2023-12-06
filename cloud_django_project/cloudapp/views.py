@@ -78,11 +78,15 @@ def success_page(request):
 
 
 def upload_file(request):
-    return render(request, 'upload.html')
+    return render(request, 'storage.html')
 
-def upload_file(request):
+def storage(request):
+    if request.method == 'GET':
+        blobs = blob_handler.list_blobs(request.user)
+        return render(request, 'storage.html', {'blobs': blobs})
     if request.method == 'POST':
         uploaded_file = request.FILES['to_send']
         blob_handler.upload_blob(request.user, uploaded_file)
-        return redirect('success_page')
-    return render(request, 'upload.html')
+        messages.success(request, 'File uploaded successfully.')
+        return redirect('storage')
+    return render(request, 'storage.html')
