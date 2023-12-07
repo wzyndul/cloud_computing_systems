@@ -1,20 +1,21 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <h2 class="text-center mb-4">Stored Files</h2>
+    <a class="btn btn-outline-secondary" href="{% url 'index_page' %}">Back</a>
+    <h2 class="text-center mb-4">Stored Files</h2>
     {% if blobs %}
         <table class="table">
             <thead>
-                <tr>
-                    <th scope="col">File Name</th>
-                </tr>
+            <tr>
+                <th scope="col">File Name</th>
+            </tr>
             </thead>
             <tbody>
-                {% for blob in blobs %}
-                    <tr>
-                        <td>{{ blob.name }}</td>
-                    </tr>
-                {% endfor %}
+            {% for blob in blobs %}
+                <tr>
+                    <td>{{ blob.name }}</td>
+                </tr>
+            {% endfor %}
             </tbody>
         </table>
     {% else %}
@@ -22,19 +23,23 @@
     {% endif %}
 
     <h3 class="mt-4">Upload</h3>
-<form method="POST" enctype="multipart/form-data" action="{% url 'storage' %}">
-    {% csrf_token %}
-    <div class="mb-3">
-        <label for="fileInput" class="form-label">Select File(s):</label>
-        <input type="file" name="files" id="fileInput" class="form-control" multiple>
-    </div>
-    <button id="uploadButton" type="submit" disabled class="btn btn-primary">Upload</button>
-</form>
-        {% for message in messages %}
-            <div class="alert alert-{{ message.tags }}">
-                {{ message }}
-            </div>
-        {% endfor %}
+    <form method="POST" enctype="multipart/form-data"
+          action="{% url 'storage' %}">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="fileInput" class="form-label">Select File(s):</label>
+            <input type="file" name="files" id="fileInput" class="form-control"
+                   multiple>
+        </div>
+        <button id="uploadButton" type="submit" disabled
+                class="btn btn-primary">Upload
+        </button>
+    </form>
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+    {% endfor %}
     <script>
         document.getElementById('fileInput').addEventListener('change', function () {
             var uploadButton = document.getElementById('uploadButton');
