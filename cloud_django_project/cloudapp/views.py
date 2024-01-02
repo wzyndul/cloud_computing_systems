@@ -80,6 +80,7 @@ def success_page(request):
 def upload_file(request):
     return render(request, 'storage.html')
 
+
 def storage(request):
     if request.method == 'GET':
         blobs = blob_handler.list_blobs(request.user)
@@ -88,10 +89,10 @@ def storage(request):
     if request.method == 'POST':
         uploaded_files = request.FILES.getlist('files')
 
-        for uploaded_file in uploaded_files:
-            blob_handler.upload_blob(request.user, uploaded_file)
+        blob_handler.parallel_upload_blob(request.user, uploaded_files)
 
         messages.success(request, f'{len(uploaded_files)} file(s) uploaded successfully.')
         return redirect('storage')
 
     return render(request, 'storage.html')
+
