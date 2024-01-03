@@ -24,4 +24,5 @@ urlpatterns = [
     path('storage/', views.storage, name='storage'),
     path('logout/', views.logout_user, name='logout_user'),
     path('success/', views.success_page, name='success_page'),
+    path('change_version/', views.change_version, name='change_version')
 ]

@@ -1,5 +1,6 @@
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.models import User
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.contrib import messages
 
@@ -83,7 +84,7 @@ def upload_file(request):
 
 def storage(request):
     if request.method == 'GET':
-        blobs = blob_handler.list_blobs(request.user)
+        blobs = blob_handler.list_blobs_with_versions(request.user)
         return render(request, 'storage.html', {'blobs': blobs})
 
     if request.method == 'POST':
@@ -95,4 +96,14 @@ def storage(request):
         return redirect('storage')
 
     return render(request, 'storage.html')
+
+
+def change_version(request):
+    if request.method == 'POST':
+        file_name = request.POST.get('file_name')
+        version = request.POST.get('version')
+        blob_handler.change_blob_version(request.user, file_name, version)
+        return JsonResponse({'status': 'success'})
+
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
 

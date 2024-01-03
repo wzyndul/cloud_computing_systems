@@ -3,24 +3,47 @@
 {% block content %}
     <a class="btn btn-outline-secondary" href="{% url 'index_page' %}">Back</a>
     <h2 class="text-center mb-4">Stored Files</h2>
-    {% if blobs %}
-        <table class="table">
-            <thead>
-            <tr>
-                <th scope="col">File Name</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for blob in blobs %}
-                <tr>
-                    <td>{{ blob.name }}</td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p class="text-center">No files available.</p>
-    {% endif %}
+      {% if blobs %}
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">File Name</th>
+          <th scope="col">Versions</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for file_name, versions in blobs.items %}
+          <tr>
+            <td>{{ file_name }}</td>
+            <td>
+              {% if versions %}
+                {% for version_id in versions %}
+                  {{ version_id }}<br>
+                {% endfor %}
+              {% else %}
+                No versions available
+              {% endif %}
+            </td>
+            <td>
+              {% if versions %}
+                {% for version_id in versions %}
+                  <div>
+                    <button class="btn btn-primary" onclick="changeVersion('{{ file_name }}', '{{ version_id }}')">Change to this version {{ version_id }}</button>
+                  </div>
+                {% endfor %}
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p class="text-center">No files available.</p>
+  {% endif %}
+
+
+
 
     <h3 class="mt-4">Upload</h3>
     <form method="POST" enctype="multipart/form-data"
@@ -40,7 +63,28 @@
             {{ message }}
         </div>
     {% endfor %}
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script>
+
+    function changeVersion(file_name, version) {
+      $.ajax({
+        type: 'POST',
+        url: '{% url "change_version" %}',
+        data: {
+          'file_name': file_name,
+          'version': version,
+          'csrfmiddlewaretoken': '{{ csrf_token }}',
+        },
+        success: function(response) {
+          console.log(response);
+          // Handle success (e.g., perform additional actions or show a message)
+        },
+        error: function(response) {
+          console.error(response);
+          // Handle error (e.g., show an error message)
+        },
+      });
+    }
         document.getElementById('fileInput').addEventListener('change', function () {
             var uploadButton = document.getElementById('uploadButton');
             uploadButton.disabled = this.files.length === 0;
