@@ -107,3 +107,16 @@ def change_version(request):
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
 
+
+def download_file(request):
+    if request.method == 'GET':
+        file_name = request.GET.get('file_name')
+        try:
+            response = blob_handler.download_blob(request.user, file_name)
+            return response
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+
+

@@ -2,6 +2,8 @@ from concurrent.futures import ThreadPoolExecutor
 
 from django.conf import settings
 from azure.storage.blob import BlobServiceClient
+from django.http import HttpResponse
+from django.utils.encoding import escape_uri_path
 
 
 def create_blob_container(user):
@@ -54,4 +56,16 @@ def change_blob_version(user, file_name, version):
     blob_client.start_copy_from_url(
         f'https://dataincloud.blob.core.windows.net/{user.username.lower()}/{file_name}?versionId={version}')
     blob_client.delete_blob(version_id=version)
+
+
+def download_blob(user, file_name):
+    blob_service_client = BlobServiceClient.from_connection_string(settings.AZURE_STORAGE_CONNECTION_STRING)
+    container_client = blob_service_client.get_container_client(user.username.lower())
+
+    blob_client = container_client.get_blob_client(file_name)
+    blob_data = blob_client.download_blob().readall()
+    response = HttpResponse(blob_data, content_type='application/octet-stream')
+    response['Content-Disposition'] = f'attachment; filename="{escape_uri_path(file_name)}"'
+
+    return response
 
