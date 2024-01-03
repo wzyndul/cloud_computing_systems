@@ -66,25 +66,38 @@
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script>
 
-    function changeVersion(file_name, version) {
+function changeVersion(file_name, version) {
+  $.ajax({
+    type: 'POST',
+    url: '{% url "change_version" %}',
+    data: {
+      'file_name': file_name,
+      'version': version,
+      'csrfmiddlewaretoken': '{{ csrf_token }}',
+    },
+    success: function(response) {
+      console.log(response);
+
+      // Make a GET request to re-render the storage.html template
       $.ajax({
-        type: 'POST',
-        url: '{% url "change_version" %}',
-        data: {
-          'file_name': file_name,
-          'version': version,
-          'csrfmiddlewaretoken': '{{ csrf_token }}',
+        type: 'GET',
+        url: '{% url "storage" %}',
+        success: function(updatedHtml) {
+          // Replace the current content with the updated HTML
+          $('body').html(updatedHtml);
         },
-        success: function(response) {
-          console.log(response);
-          // Handle success (e.g., perform additional actions or show a message)
-        },
-        error: function(response) {
-          console.error(response);
+        error: function(error) {
+          console.error(error);
           // Handle error (e.g., show an error message)
         },
       });
-    }
+    },
+    error: function(response) {
+      console.error(response);
+      // Handle error (e.g., show an error message)
+    },
+  });
+}
         document.getElementById('fileInput').addEventListener('change', function () {
             var uploadButton = document.getElementById('uploadButton');
             uploadButton.disabled = this.files.length === 0;
