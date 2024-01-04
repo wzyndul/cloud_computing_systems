@@ -84,7 +84,7 @@ def upload_file(request):
 
 def storage(request):
     if request.method == 'GET':
-        blobs = blob_handler.list_blobs_with_versions(request.user)
+        blobs = blob_handler.list_blobs_with_properties(request.user)
         return render(request, 'storage.html', {'blobs': blobs})
 
     if request.method == 'POST':

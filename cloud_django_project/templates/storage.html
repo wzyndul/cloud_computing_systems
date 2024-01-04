@@ -13,27 +13,35 @@
             </thead>
             <tbody>
             {% for file_name, versions in blobs.items %}
-                <tr>
-                    <td class="file-name">{{ file_name }}
-                        <a href="{% url 'download_file' %}?file_name={{ file_name }}" download>Download File</a>
-                    </td>
-                <!-- TODO zrobić tak, żeby w wersjach do przywrócenia była obecna wersja -->
-                    <td class="versions-actions">
-                        {% if versions %}
-                            {% for version_id in versions %}
-                                <div class="version-container">
-                                    <div class="versions">{{ version_id }}</div>
-                                    <button class="btn btn-primary"
-                                            onclick="changeVersion('{{ file_name }}', '{{ version_id }}')">Change to
-                                        this version
-                                    </button>
-                                </div>
-                            {% endfor %}
-                        {% else %}
-                            <div class="versions">No versions available</div>
-                        {% endif %}
-                    </td>
-                </tr>
+                {% with last_version=versions|last %}
+                    <tr>
+                        <td class="file-name">{{ file_name }} <br>
+                            Size: {{ last_version.size }} bytes<br>
+                            Last Modified: {{ last_version.last_modified }}<br>
+                            Version ID: {{ last_version.version_id }}<br>
+                            <a href="{% url 'download_file' %}?file_name={{ file_name }}" download>Download File</a>
+                        </td>
+
+                        <td>
+                            {% if versions %}
+                                {% for version in versions %}
+                                    {% if version != last_version %} {# Don't show the last version because last version is current version #}
+                                        <div class="version-container">
+                                            <div class="versions">{{ version.version_id }}</div>
+                                            <button class="btn btn-primary"
+                                                    onclick="changeVersion('{{ file_name }}', '{{ version.version_id }}')">
+                                                Change to
+                                                this version
+                                            </button>
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                            {% else %}
+                                <div class="versions">No versions available</div>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endwith %}
             {% endfor %}
             </tbody>
         </table>

@@ -30,22 +30,28 @@ def parallel_upload_blob(user, files):
         future.result()
 
 
-def list_blobs_with_versions(user):
+def list_blobs_with_properties(user):
     blob_service_client = BlobServiceClient.from_connection_string(settings.AZURE_STORAGE_CONNECTION_STRING)
     container_client = blob_service_client.get_container_client(user.username.lower())
     blob_list = container_client.list_blobs(include=['versions'])
 
     # Organize blobs by file name
-    files_with_versions = {}
+    files_with_properties = {}
     for blob in blob_list:
         file_name = blob.name
-        version_id = blob.version_id if hasattr(blob, 'version_id') else None
+        version_id = blob.version_id
+        last_modified = blob.last_modified
+        size = blob.size
 
-        if file_name not in files_with_versions:
-            files_with_versions[file_name] = []
+        if file_name not in files_with_properties:
+            files_with_properties[file_name] = []
 
-        files_with_versions[file_name].append(version_id)
-    return files_with_versions
+        files_with_properties[file_name].append({
+            'version_id': version_id,
+            'last_modified': last_modified,
+            'size': size
+        })
+    return files_with_properties
 
 
 def change_blob_version(user, file_name, version):
