@@ -73,11 +73,6 @@ def logout_user(request):
     return redirect('index_page')
 
 
-def success_page(request):
-    users = User.objects.all()  # Retrieve all users
-    return render(request, 'success.html', {'users': users})
-
-
 def upload_file(request):
     return render(request, 'storage.html')
 
