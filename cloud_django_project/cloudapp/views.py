@@ -1,5 +1,6 @@
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.models import User
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.contrib import messages
 
@@ -80,18 +81,42 @@ def success_page(request):
 def upload_file(request):
     return render(request, 'storage.html')
 
+
 def storage(request):
     if request.method == 'GET':
-        blobs = blob_handler.list_blobs(request.user)
+        blobs = blob_handler.list_blobs_with_properties(request.user)
         return render(request, 'storage.html', {'blobs': blobs})
 
     if request.method == 'POST':
         uploaded_files = request.FILES.getlist('files')
 
-        for uploaded_file in uploaded_files:
-            blob_handler.upload_blob(request.user, uploaded_file)
+        blob_handler.parallel_upload_blob(request.user, uploaded_files)
 
         messages.success(request, f'{len(uploaded_files)} file(s) uploaded successfully.')
         return redirect('storage')
 
     return render(request, 'storage.html')
+
+
+def change_version(request):
+    if request.method == 'POST':
+        file_name = request.POST.get('file_name')
+        version = request.POST.get('version')
+        blob_handler.change_blob_version(request.user, file_name, version)
+        return JsonResponse({'status': 'success'})
+
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+
+
+def download_file(request):
+    if request.method == 'GET':
+        file_name = request.GET.get('file_name')
+        try:
+            response = blob_handler.download_blob(request.user, file_name)
+            return response
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+
+

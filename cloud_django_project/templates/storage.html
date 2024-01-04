@@ -8,19 +8,49 @@
             <thead>
             <tr>
                 <th scope="col">File Name</th>
+                <th scope="col">Versions</th>
             </tr>
             </thead>
             <tbody>
-            {% for blob in blobs %}
-                <tr>
-                    <td>{{ blob.name }}</td>
-                </tr>
+            {% for file_name, versions in blobs.items %}
+                {% with last_version=versions|last %}
+                    <tr>
+                        <td class="file-name">{{ file_name }} <br>
+                            Size: {{ last_version.size }} bytes<br>
+                            Last Modified: {{ last_version.last_modified }}<br>
+                            Version ID: {{ last_version.version_id }}<br>
+                            <a href="{% url 'download_file' %}?file_name={{ file_name }}" download>Download File</a>
+                        </td>
+
+                        <td>
+                            {% if versions %}
+                                {% for version in versions %}
+                                    {% if version != last_version %} {# Don't show the last version because last version is current version #}
+                                        <div class="version-container">
+                                            <div class="versions">{{ version.version_id }}</div>
+                                            <button class="btn btn-primary"
+                                                    onclick="changeVersion('{{ file_name }}', '{{ version.version_id }}')">
+                                                Change to
+                                                this version
+                                            </button>
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                            {% else %}
+                                <div class="versions">No versions available</div>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endwith %}
             {% endfor %}
             </tbody>
         </table>
     {% else %}
         <p class="text-center">No files available.</p>
     {% endif %}
+
+
+
 
     <h3 class="mt-4">Upload</h3>
     <form method="POST" enctype="multipart/form-data"
@@ -40,7 +70,60 @@
             {{ message }}
         </div>
     {% endfor %}
+
+    <style>
+
+        .version-container {
+            display: flex;
+        {#justify-content: space-around;#} align-items: center;
+        }
+
+        .versions {
+            margin-top: 10px;
+        }
+
+        .btn-primary {
+            margin-top: 5px;
+            margin-left: 50px;
+        }
+
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script>
+
+        function changeVersion(file_name, version) {
+            $.ajax({
+                type: 'POST',
+                url: '{% url "change_version" %}',
+                data: {
+                    'file_name': file_name,
+                    'version': version,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}',
+                },
+                success: function (response) {
+                    console.log(response);
+
+                    // Make a GET request to re-render the storage.html template
+                    $.ajax({
+                        type: 'GET',
+                        url: '{% url "storage" %}',
+                        success: function (updatedHtml) {
+                            // Replace the current content with the updated HTML
+                            $('body').html(updatedHtml);
+                        },
+                        error: function (error) {
+                            console.error(error);
+                            // Handle error (e.g., show an error message)
+                        },
+                    });
+                },
+                error: function (response) {
+                    console.error(response);
+                    // Handle error (e.g., show an error message)
+                },
+            });
+        }
+
         document.getElementById('fileInput').addEventListener('change', function () {
             var uploadButton = document.getElementById('uploadButton');
             uploadButton.disabled = this.files.length === 0;
