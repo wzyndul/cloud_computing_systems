@@ -5,31 +5,10 @@ from django.contrib.auth.models import User
 
 class UserRegistrationForm(UserCreationForm):
     username = forms.CharField()
-    email = forms.EmailField(required=True)
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'password1', 'password2']
-
-    # Preventing duplicate emails
-    def clean_email(self):
-        email = self.cleaned_data.get('email')
-        username = self.cleaned_data.get('username')
-
-        if email and User.objects.filter(email=email).exclude(username=username).exists():
-            raise forms.ValidationError(u'Email address already in use.')
-
-        return email
-
-    # Overriding the default save method to save the email
-    def save(self, commit=True):
-        user = super(UserRegistrationForm, self).save(commit=False)
-        user.email = self.cleaned_data['email']
-
-        if commit:
-            user.save()
-
-        return user
+        fields = ['username', 'password1', 'password2']
 
 
 class UserLoginForm(forms.Form):
