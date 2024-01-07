@@ -4,19 +4,25 @@
 
 {% block content %}
     <link rel="stylesheet" type="text/css" href="{% static 'index.css' %}">
-    {% if request.user.is_authenticated %}
-        <h2 class="text-center">Welcome, {{ request.user.username | title }}!</h2>
-        <div class="text-center">
-            <a class="btn btn-primary" href="{% url 'logout_user' %}">Logout</a>
-            <a class="btn btn-outline-primary" href="{% url 'storage' %}">My storage</a>
-        </div>
-    {% else %}
-        <h2 class="text-center">Welcome!</h2>
-        <div class="text-center">
-            <a class="btn btn-outline-danger" href="{% url 'login_user' %}">Login</a>
-            <a class="btn btn-outline-primary" href="{% url 'register_user' %}">Register</a>
-        </div>
-    {% endif %}
+    <div class="home-container">
+        {% if request.user.is_authenticated %}
+            <h2 class="text-center">
+                Welcome, {{ request.user.username | title }}!</h2>
+            <div class="text-center">
+                <a class="btn btn-primary btn-one" href="{% url 'logout_user' %}">Logout</a>
+                <a class="btn btn-primary btn-two" href="{% url 'storage' %}">My
+                    storage</a>
+            </div>
+        {% else %}
+            <h2 class="text-center">Welcome!</h2>
+            <div class="text-center">
+                <a class="btn btn-primary btn-two"
+                   href="{% url 'login_user' %}">Login</a>
+                <a class="btn btn-primary btn-three"
+                   href="{% url 'register_user' %}">Register</a>
+            </div>
+        {% endif %}
+    </div>
     <div class="text-center">
         {% for message in messages %}
             <div class="alert alert-{{ message.tags }}">
