@@ -7,15 +7,16 @@
         <table class="table">
             <thead>
             <tr>
-                <th scope="col">File Name</th>
-                <th scope="col">Versions</th>
+                <th scope="col">File Description</th>
+                <th scope="col">Previous Versions</th>
             </tr>
             </thead>
             <tbody>
             {% for file_name, versions in blobs.items %}
                 {% with last_version=versions|last %}
                     <tr>
-                        <td class="file-name">{{ file_name }} <br>
+                        <td class="file-name">
+                            File Name: {{ file_name }} <br>
                             Size: {{ last_version.size }} bytes<br>
                             Last Modified: {{ last_version.last_modified }}<br>
                             Version ID: {{ last_version.version_id }}<br>
@@ -25,10 +26,13 @@
                         <td>
                             {% if versions %}
                                 {% for version in versions %}
-                                    {% if version != last_version %} {# Don't show the last version because last version is current version #}
+                                    {% if version != last_version %}
+                                        {# Don't show the last version because last version is current version #}
                                         <div class="version-container">
-                                            <div class="versions">{{ version.version_id }}</div>
-                                            <button class="btn btn-primary"
+                                            Size: {{ version.size }} bytes<br>
+                                            Last Modified: {{ version.last_modified }}<br>
+                                            Version ID: {{ version.version_id }}<br>
+                                            <button class="btn btn-secondary"
                                                     onclick="changeVersion('{{ file_name }}', '{{ version.version_id }}')">
                                                 Change to
                                                 this version
@@ -37,7 +41,7 @@
                                     {% endif %}
                                 {% endfor %}
                             {% else %}
-                                <div class="versions">No versions available</div>
+                                <div>No versions available</div>
                             {% endif %}
                         </td>
                     </tr>
@@ -62,7 +66,7 @@
                    multiple>
         </div>
         <button id="uploadButton" type="submit" disabled
-                class="btn btn-primary">Upload
+                class="btn btn-secondary">Upload
         </button>
     </form>
     {% for message in messages %}
@@ -72,21 +76,28 @@
     {% endfor %}
 
     <style>
+        body {
+            background-color: #9fd3c7;
+        }
+
+        .table {
+            margin-top: 20px;
+        }
+
 
         .version-container {
             display: flex;
-        {#justify-content: space-around;#} align-items: center;
+            align-items: center;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: #ececec;
         }
 
-        .versions {
-            margin-top: 10px;
-        }
-
-        .btn-primary {
+        .btn-secondary {
             margin-top: 5px;
             margin-left: 50px;
         }
-
     </style>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script>
@@ -129,6 +140,5 @@
             uploadButton.disabled = this.files.length === 0;
         });
     </script>
+
 {% endblock %}
-
-
