@@ -1,7 +1,9 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %} Home {% endblock %}
 
 {% block content %}
+    <link rel="stylesheet" type="text/css" href="{% static 'index.css' %}">
     {% if request.user.is_authenticated %}
         <h2 class="text-center">Welcome, {{ request.user.username | title }}!</h2>
         <div class="text-center">
