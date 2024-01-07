@@ -1,6 +1,8 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block content %}
+    <link rel="stylesheet" type="text/css" href="{% static 'storage.css' %}">
     <a class="btn btn-outline-secondary" href="{% url 'index_page' %}">Back</a>
     <h2 class="text-center mb-4">Stored Files</h2>
     {% if blobs %}
@@ -75,30 +77,30 @@
         </div>
     {% endfor %}
 
-    <style>
-        body {
-            background-color: #9fd3c7;
-        }
-
-        .table {
-            margin-top: 20px;
-        }
-
-
-        .version-container {
-            display: flex;
-            align-items: center;
-            border: 1px solid #ccc;
-            padding: 10px;
-            margin-bottom: 10px;
-            background-color: #ececec;
-        }
-
-        .btn-secondary {
-            margin-top: 5px;
-            margin-left: 50px;
-        }
-    </style>
+{#    <style>#}
+{#        body {#}
+{#            background-color: #9fd3c7;#}
+{#        }#}
+{##}
+{#        .table {#}
+{#            margin-top: 20px;#}
+{#        }#}
+{##}
+{##}
+{#        .version-container {#}
+{#            display: flex;#}
+{#            align-items: center;#}
+{#            border: 1px solid #ccc;#}
+{#            padding: 10px;#}
+{#            margin-bottom: 10px;#}
+{#            background-color: #ececec;#}
+{#        }#}
+{##}
+{#        .btn-secondary {#}
+{#            margin-top: 5px;#}
+{#            margin-left: 50px;#}
+{#        }#}
+{#    </style>#}
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script>
 

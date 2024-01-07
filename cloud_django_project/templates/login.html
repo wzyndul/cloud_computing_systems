@@ -1,7 +1,9 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}Login{% endblock %}
 
 {% block content %}
+    <link rel="stylesheet" type="text/css" href="{% static 'login.css' %}">
     <div class="container">
         <a class="btn btn-outline-secondary" href="{% url 'index_page' %}">Back</a>
         <div class="row justify-content-center">
