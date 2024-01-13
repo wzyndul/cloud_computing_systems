@@ -7,6 +7,8 @@
     border-radius: 10px;
     padding: 80px;
     box-shadow: 4px 5px 0px 1px #9fd3c7;
+    overflow: auto;
+    height: 90vh;
 }
 
 .version-container {

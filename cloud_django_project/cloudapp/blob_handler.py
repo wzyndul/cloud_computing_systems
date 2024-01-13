@@ -35,13 +35,14 @@ def list_blobs_with_properties(user):
     container_client = blob_service_client.get_container_client(user.username.lower())
     blob_list = container_client.list_blobs(include=['versions'])
 
-    # Organize blobs by file name
     files_with_properties = {}
     for blob in blob_list:
         file_name = blob.name
         version_id = blob.version_id
         last_modified = blob.last_modified
         size = blob.size
+
+
 
         if file_name not in files_with_properties:
             files_with_properties[file_name] = []
