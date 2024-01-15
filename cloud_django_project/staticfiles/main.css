@@ -1,0 +1,64 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;900&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Roboto', sans-serif;
+}
+
+body {
+    background-image: url("bg.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* redd-ish button */
+.btn-one {
+    background-color: #D39FAB;
+    border: none;
+    transition: background 0.2s, box-shadow 0.3s;
+}
+
+.btn-one:hover {
+    background-color: #B77E8F;
+    box-shadow: 0px 0px 7px 0px #B77E8F;
+}
+
+/* green-ish button */
+.btn-two {
+    background-color: #9fd3c7;
+    border: none;
+    transition: background 0.2s, box-shadow 0.3s;
+}
+
+.btn-two:hover {
+    background-color: #7eb7aa;
+    box-shadow: 0px 0px 7px 0px #7eb7aa;
+}
+
+/* purple-ish button */
+.btn-three {
+    background-color: #C79FD3;
+    border: none;
+    transition: background 0.2s, box-shadow 0.3s;
+}
+
+.btn-three:hover {
+    background-color: #b38ac0;
+    box-shadow: 0px 0px 7px 0px #b38ac0;
+}
+
+.link {
+    text-decoration: none;
+    color: #b38ac0;
+}
+
+.link:hover {
+    color: #ab75bc;
+}

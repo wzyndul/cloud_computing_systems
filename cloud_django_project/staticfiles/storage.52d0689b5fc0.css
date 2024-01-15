@@ -1,0 +1,27 @@
+.table {
+    margin-top: 20px;
+}
+
+.storage-container {
+    background: #f3f0f0;
+    border-radius: 10px;
+    padding: 80px;
+    box-shadow: 4px 5px 0px 1px #9fd3c7;
+    overflow: auto;
+    height: 90vh;
+}
+
+.version-container {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #ececec;
+}
+
+.btn-version {
+    margin-top: 5px;
+    margin-left: 50px;
+}

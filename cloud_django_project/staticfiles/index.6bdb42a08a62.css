@@ -1,0 +1,17 @@
+body {
+    background-image: url("bg.78b44abce7a0.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.home-container {
+    background: #f3f0f0;
+    border-radius: 10px;
+    padding: 80px;
+    box-shadow: 4px 5px 0px 1px #9fd3c7;
+}
