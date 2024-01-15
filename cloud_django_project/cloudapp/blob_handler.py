@@ -42,8 +42,6 @@ def list_blobs_with_properties(user):
         last_modified = blob.last_modified
         size = blob.size
 
-
-
         if file_name not in files_with_properties:
             files_with_properties[file_name] = []
 
@@ -75,4 +73,3 @@ def download_blob(user, file_name):
     response['Content-Disposition'] = f'attachment; filename="{escape_uri_path(file_name)}"'
 
     return response
-

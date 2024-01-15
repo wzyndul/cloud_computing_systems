@@ -6,9 +6,9 @@ from django.contrib import messages
 
 from cloud_django_project.forms import UserRegistrationForm, UserLoginForm
 from cloudapp import blob_handler
+from cloudapp.utils import authenticate_user
 
 
-# Main page
 def index_page(request):
     return render(request, 'index.html')
 
@@ -28,7 +28,7 @@ def register_user(request):
             return redirect('index_page')
 
         else:
-            messages.error(request,
+            messages.warning(request,
                            'Unsuccessful registration. Invalid information.')
 
     form = UserRegistrationForm()
@@ -39,22 +39,20 @@ def register_user(request):
 def login_user(request):
     if request.method == 'POST':
         form = UserLoginForm(request.POST)
-
         if form.is_valid():
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
             user = authenticate(username=username, password=password)
-
             if user:
                 messages.success(request,
                                  f"You are now logged in as {username}.")
                 login(request, user)
                 return redirect('index_page')
             else:
-                messages.error(request, "Invalid username or password.")
+                messages.warning(request, "Invalid username or password.")
 
         else:
-            messages.error(request, "Invalid username or password.")
+            messages.warning(request, "Invalid username or password.")
 
     elif request.method == 'GET':
         if request.user.is_authenticated:
@@ -73,10 +71,11 @@ def logout_user(request):
     return redirect('index_page')
 
 
+@authenticate_user
 def upload_file(request):
     return render(request, 'storage.html')
 
-
+@authenticate_user
 def storage(request):
     if request.method == 'GET':
         blobs = blob_handler.list_blobs_with_properties(request.user)
@@ -92,7 +91,7 @@ def storage(request):
 
     return render(request, 'storage.html')
 
-
+@authenticate_user
 def change_version(request):
     if request.method == 'POST':
         file_name = request.POST.get('file_name')
@@ -102,7 +101,7 @@ def change_version(request):
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
 
-
+@authenticate_user
 def download_file(request):
     if request.method == 'GET':
         file_name = request.GET.get('file_name')

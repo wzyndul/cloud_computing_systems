@@ -25,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-ts562&usn0h#4@ax9s50s^9%xdcvx(dqrjtom&z(%s79j_)z!0'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['cloudappdjango.azurewebsites.net', '127.0.0.1']
 CSRF_TRUSTED_ORIGINS = ['https://cloudappdjango.azurewebsites.net']
