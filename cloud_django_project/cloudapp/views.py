@@ -16,20 +16,24 @@ def index_page(request):
 # Registering users
 def register_user(request):
     if request.method == 'POST':
-        form = UserRegistrationForm(request.POST)
+        try:
+            form = UserRegistrationForm(request.POST)
 
-        if form.is_valid():
-            user = form.save(commit=False)
-            user.username = user.username.lower()
-            user.save()
-            blob_handler.create_blob_container(user)
-            messages.success(request, 'Registration successful.')
-            login(request, user)
-            return redirect('index_page')
+            if form.is_valid():
+                user = form.save(commit=False)
+                user.username = user.username.lower()
+                user.save()
+                blob_handler.create_blob_container(user)
+                messages.success(request, 'Registration successful.')
+                login(request, user)
+                return redirect('index_page')
 
-        else:
-            messages.warning(request,
-                           'Unsuccessful registration. Invalid information.')
+            else:
+                messages.warning(request,'Unsuccessful registration. Invalid information.')
+        except Exception as e:
+            messages.error(request, "Internal Server Error. Please try again later.")
+            return render(request, 'error_page.html', {'error_message': "Internal Server Error."})
+
 
     form = UserRegistrationForm()
     return render(request, 'register.html', {'register_form': form})
@@ -38,21 +42,25 @@ def register_user(request):
 # Logging in users
 def login_user(request):
     if request.method == 'POST':
-        form = UserLoginForm(request.POST)
-        if form.is_valid():
-            username = form.cleaned_data['username']
-            password = form.cleaned_data['password']
-            user = authenticate(username=username, password=password)
-            if user:
-                messages.success(request,
-                                 f"You are now logged in as {username}.")
-                login(request, user)
-                return redirect('index_page')
+        try:
+            form = UserLoginForm(request.POST)
+            if form.is_valid():
+                username = form.cleaned_data['username']
+                password = form.cleaned_data['password']
+                user = authenticate(username=username, password=password)
+                if user:
+                    messages.success(request,
+                                    f"You are now logged in as {username}.")
+                    login(request, user)
+                    return redirect('index_page')
+                else:
+                    messages.warning(request, "Invalid username or password.")
+
             else:
                 messages.warning(request, "Invalid username or password.")
-
-        else:
-            messages.warning(request, "Invalid username or password.")
+        except Exception as e:
+            messages.error(request, "Internal Server Error. Please try again later.")
+            return render(request, 'error_page.html', {'error_message': "Internal Server Error."})
 
     elif request.method == 'GET':
         if request.user.is_authenticated:
@@ -66,38 +74,49 @@ def login_user(request):
 
 # Logging out users
 def logout_user(request):
-    logout(request)
-    messages.info(request, "You have successfully logged out.")
-    return redirect('index_page')
+    try:
+        logout(request)
+        messages.info(request, "You have successfully logged out.")
+        return redirect('index_page')
+    except Exception as e:
+        messages.error(request, "Internal Server Error. Please try again later.")
+        return render(request, 'error_page.html', {'error_message': "Internal Server Error."})
 
-
-@authenticate_user
-def upload_file(request):
-    return render(request, 'storage.html')
 
 @authenticate_user
 def storage(request):
     if request.method == 'GET':
-        blobs = blob_handler.list_blobs_with_properties(request.user)
-        return render(request, 'storage.html', {'blobs': blobs})
+        try:
+            blobs = blob_handler.list_blobs_with_properties(request.user)
+            return render(request, 'storage.html', {'blobs': blobs})
+        except Exception as e:
+            messages.error(request, "Internal Server Error. Please try again later.")
+            return render(request, 'error_page.html', {'error_message': "Internal Server Error."})
+    elif request.method == 'POST':
+        try:
+            uploaded_files = request.FILES.getlist('files')
 
-    if request.method == 'POST':
-        uploaded_files = request.FILES.getlist('files')
+            blob_handler.parallel_upload_blob(request.user, uploaded_files)
 
-        blob_handler.parallel_upload_blob(request.user, uploaded_files)
-
-        messages.success(request, f'{len(uploaded_files)} file(s) uploaded successfully.')
-        return redirect('storage')
+            messages.success(request, f'{len(uploaded_files)} file(s) uploaded successfully.')
+            return redirect('storage')
+        except Exception as e:
+            messages.error(request, "Internal Server Error. Please try again later.")
+            return render(request, 'error_page.html', {'error_message': "Internal Server Error."})
 
     return render(request, 'storage.html')
 
 @authenticate_user
 def change_version(request):
     if request.method == 'POST':
-        file_name = request.POST.get('file_name')
-        version = request.POST.get('version')
-        blob_handler.change_blob_version(request.user, file_name, version)
-        return JsonResponse({'status': 'success'})
+        try:
+            file_name = request.POST.get('file_name')
+            version = request.POST.get('version')
+            blob_handler.change_blob_version(request.user, file_name, version)
+            return JsonResponse({'status': 'success'})
+        except Exception as e:
+            messages.error(request, "Internal Server Error. Please try again later.")
+            return render(request, 'error_page.html', {'error_message': "Internal Server Error."})
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
 
@@ -109,7 +128,8 @@ def download_file(request):
             response = blob_handler.download_blob(request.user, file_name)
             return response
         except Exception as e:
-            return JsonResponse({'status': 'error', 'message': str(e)})
+            messages.error(request, "Internal Server Error. Please try again later.")
+            return render(request, 'error_page.html', {'error_message': "Internal Server Error."})
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
 
