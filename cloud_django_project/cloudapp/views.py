@@ -4,6 +4,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from cloud_django_project.forms import UserRegistrationForm, UserLoginForm
 from cloudapp import blob_handler
+from cloudapp.models import UserActivityLog
 from cloudapp.utils import authenticate_user
 from cloudapp.utils import logger
 
@@ -26,6 +27,7 @@ def register_user(request):
                 messages.success(request, 'Registration successful.')
                 login(request, user)
                 logger.info(f'New user registered: {user.username}')
+                UserActivityLog.objects.create(username=user, activity='register')
                 return redirect('index_page')
 
             else:
@@ -53,6 +55,7 @@ def login_user(request):
                                     f"You are now logged in as {username}.")
                     login(request, user)
                     logger.info(f'User logged in: {username}')
+                    UserActivityLog.objects.create(username=user, activity='login')
                     return redirect('index_page')
                 else:
                     messages.warning(request, "Invalid username or password.")
@@ -80,6 +83,7 @@ def logout_user(request):
         logout(request)
         messages.info(request, "You have successfully logged out.")
         logger.info(f'User logged out: {username}')
+        UserActivityLog.objects.create(username=request.user, activity='logout')
         return redirect('index_page')
     except Exception as e:
         messages.error(request, "Internal Server Error. Please try again later.")

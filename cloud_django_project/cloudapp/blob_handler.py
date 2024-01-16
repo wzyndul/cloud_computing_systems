@@ -3,6 +3,8 @@ from django.conf import settings
 from azure.storage.blob import BlobServiceClient
 from django.http import HttpResponse
 from django.utils.encoding import escape_uri_path
+
+from cloudapp.models import FileActivityLog
 from cloudapp.utils import logger
 
 
@@ -14,6 +16,7 @@ def create_blob_container(user):
         container_client.create_container()
 
     logger.info(f'New container created for user: {user.username.lower()}')
+    FileActivityLog.objects.create(username=user, activity='create_blob_container')
 
 
 def upload_blob(user, file):
@@ -23,6 +26,7 @@ def upload_blob(user, file):
     blob_client = container_client.get_blob_client(file.name)
     blob_client.upload_blob(file, overwrite=True)
     logger.info(f'New file "{file.name}" uploaded for user: {user.username.lower()}')
+    FileActivityLog.objects.create(username=user, activity='upload_blob', file_name=file.name)
 
 
 def parallel_upload_blob(user, files):
@@ -33,6 +37,11 @@ def parallel_upload_blob(user, files):
         future.result()
 
     logger.info(f'{len(files)} file(s) uploaded for user: {user.username.lower()}')
+    FileActivityLog.objects.bulk_create([
+        FileActivityLog(username=user, activity='parallel_upload_blob',
+                        file_name=file.name)
+        for file in files
+    ])
 
 
 def list_blobs_with_properties(user):
@@ -57,6 +66,7 @@ def list_blobs_with_properties(user):
         })
 
     logger.info(f'List of files with properties returned for user: {user.username.lower()}')
+    FileActivityLog.objects.create(username=user, activity='list_blobs_with_properties')
     return files_with_properties
 
 
@@ -69,6 +79,7 @@ def change_blob_version(user, file_name, version):
         f'https://dataincloud.blob.core.windows.net/{user.username.lower()}/{file_name}?versionId={version}')
     blob_client.delete_blob(version_id=version)
     logger.info(f'Version of file "{file_name}" changed for user: {user.username.lower()}')
+    FileActivityLog.objects.create(username=user, activity='change_blob_version', file_name=file_name)
 
 
 def download_blob(user, file_name):
@@ -81,4 +92,5 @@ def download_blob(user, file_name):
     response['Content-Disposition'] = f'attachment; filename="{escape_uri_path(file_name)}"'
 
     logger.info(f'File "{file_name}" downloaded for user: {user.username.lower()}')
+    FileActivityLog.objects.create(username=user, activity='download_blob', file_name=file_name)
     return response
