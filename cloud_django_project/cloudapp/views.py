@@ -1,5 +1,4 @@
 from django.contrib.auth import login, authenticate, logout
-from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.contrib import messages
@@ -127,6 +126,19 @@ def download_file(request):
         try:
             response = blob_handler.download_blob(request.user, file_name)
             return response
+        except Exception as e:
+            messages.error(request, "Internal Server Error. Please try again later.")
+            return render(request, 'error_page.html', {'error_message': "Internal Server Error."})
+
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+
+@authenticate_user
+def delete_file(request):
+    if request.method == 'GET':
+        file_name = request.GET.get('file_name')
+        try:
+            blob_handler.delete_blob(request.user, file_name)
+            return redirect('storage')
         except Exception as e:
             messages.error(request, "Internal Server Error. Please try again later.")
             return render(request, 'error_page.html', {'error_message': "Internal Server Error."})

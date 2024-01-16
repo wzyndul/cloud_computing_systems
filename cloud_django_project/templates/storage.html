@@ -27,6 +27,15 @@
                                 Version ID: {{ last_version.version_id }}<br>
                                 <a class="link" href="{% url 'download_file' %}?file_name={{ file_name }}"
                                    download>Download File</a>
+                                {#                                <button class="btn btn-secondary btn-version btn-one"#}
+                                {#                                        onclick="deleteFile('{{ file_name }}')">Delete file#}
+                                {#                                </button>#}
+                                <form method="get" action="{% url 'delete_file' %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="file_name" value="{{ file_name }}">
+                                    <button type="submit" class="btn btn-secondary btn-version btn-one">Delete file
+                                    </button>
+                                </form>
                             </td>
 
                             <td>
@@ -122,6 +131,7 @@
                 },
             });
         }
+
 
         document.getElementById('fileInput').addEventListener('change', function () {
             var uploadButton = document.getElementById('uploadButton');
