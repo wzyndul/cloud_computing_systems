@@ -1,12 +1,11 @@
 from django.contrib.auth import login, authenticate, logout
-from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.contrib import messages
-
 from cloud_django_project.forms import UserRegistrationForm, UserLoginForm
 from cloudapp import blob_handler
 from cloudapp.utils import authenticate_user
+from cloudapp.utils import logger
 
 
 def index_page(request):
@@ -26,6 +25,7 @@ def register_user(request):
                 blob_handler.create_blob_container(user)
                 messages.success(request, 'Registration successful.')
                 login(request, user)
+                logger.info(f'New user registered: {user.username}')
                 return redirect('index_page')
 
             else:
@@ -52,6 +52,7 @@ def login_user(request):
                     messages.success(request,
                                     f"You are now logged in as {username}.")
                     login(request, user)
+                    logger.info(f'User logged in: {username}')
                     return redirect('index_page')
                 else:
                     messages.warning(request, "Invalid username or password.")
@@ -75,8 +76,10 @@ def login_user(request):
 # Logging out users
 def logout_user(request):
     try:
+        username = request.user.username
         logout(request)
         messages.info(request, "You have successfully logged out.")
+        logger.info(f'User logged out: {username}')
         return redirect('index_page')
     except Exception as e:
         messages.error(request, "Internal Server Error. Please try again later.")
@@ -106,6 +109,7 @@ def storage(request):
 
     return render(request, 'storage.html')
 
+
 @authenticate_user
 def change_version(request):
     if request.method == 'POST':
@@ -119,6 +123,7 @@ def change_version(request):
             return render(request, 'error_page.html', {'error_message': "Internal Server Error."})
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+
 
 @authenticate_user
 def download_file(request):
