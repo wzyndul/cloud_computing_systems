@@ -115,9 +115,9 @@ def change_version(request):
     if request.method == 'POST':
         try:
             file_name = request.POST.get('file_name')
-            version = request.POST.get('version')
+            version = request.POST.get('version_id')
             blob_handler.change_blob_version(request.user, file_name, version)
-            return JsonResponse({'status': 'success'})
+            return redirect('storage')
         except Exception as e:
             messages.error(request, "Internal Server Error. Please try again later.")
             return render(request, 'error_page.html', {'error_message': "Internal Server Error."})
@@ -132,6 +132,19 @@ def download_file(request):
         try:
             response = blob_handler.download_blob(request.user, file_name)
             return response
+        except Exception as e:
+            messages.error(request, "Internal Server Error. Please try again later.")
+            return render(request, 'error_page.html', {'error_message': "Internal Server Error."})
+
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+
+@authenticate_user
+def delete_file(request):
+    if request.method == 'POST':
+        file_name = request.POST.get('file_name')
+        try:
+            blob_handler.delete_blob(request.user, file_name)
+            return redirect('storage')
         except Exception as e:
             messages.error(request, "Internal Server Error. Please try again later.")
             return render(request, 'error_page.html', {'error_message': "Internal Server Error."})

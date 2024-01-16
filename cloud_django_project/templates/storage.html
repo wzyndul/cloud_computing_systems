@@ -25,10 +25,18 @@
                                 Size: {{ last_version.size }} bytes<br>
                                 Last Modified: {{ last_version.last_modified }}<br>
                                 Version ID: {{ last_version.version_id }}<br>
-                                <a class="link" href="{% url 'download_file' %}?file_name={{ file_name }}"
-                                   download>Download File</a>
+                                <form method="GET" action="{% url 'download_file' %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="file_name" value="{{ file_name }}">
+                                    <button type="submit" class="btn btn-secondary btn-version btn-one">Download File</button>
+                                </form>
+                                <form method="POST" action="{% url 'delete_file' %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="file_name" value="{{ file_name }}">
+                                    <button type="submit" class="btn btn-secondary btn-version btn-one">Delete file
+                                    </button>
+                                </form>
                             </td>
-
                             <td>
                                 {% if versions %}
                                     {% for version in versions %}
@@ -41,11 +49,15 @@
                                                 Modified: {{ version.last_modified }}<br>
                                                 Version
                                                 ID: {{ version.version_id }}<br>
-                                                <button class="btn btn-secondary btn-version btn-two"
-                                                        onclick="changeVersion('{{ file_name }}', '{{ version.version_id }}')">
-                                                    Change to
-                                                    this version
-                                                </button>
+                                                <form method="POST" action="{% url 'change_version' %}">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="file_name" value="{{ file_name }}">
+                                                    <input type="hidden" name="version_id"
+                                                           value="{{ version.version_id }}">
+                                                    <button type="submit" class="btn btn-secondary btn-version btn-two">
+                                                        Change to this version
+                                                    </button>
+                                                </form>
                                             </div>
                                         {% endif %}
                                     {% endfor %}
@@ -89,40 +101,6 @@
 
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script>
-
-        function changeVersion(file_name, version) {
-            $.ajax({
-                type: 'POST',
-                url: '{% url "change_version" %}',
-                data: {
-                    'file_name': file_name,
-                    'version': version,
-                    'csrfmiddlewaretoken': '{{ csrf_token }}',
-                },
-                success: function (response) {
-                    console.log(response);
-
-                    // Make a GET request to re-render the storage.html template
-                    $.ajax({
-                        type: 'GET',
-                        url: '{% url "storage" %}',
-                        success: function (updatedHtml) {
-                            // Replace the current content with the updated HTML
-                            $('body').html(updatedHtml);
-                        },
-                        error: function (error) {
-                            console.error(error);
-                            // Handle error (e.g., show an error message)
-                        },
-                    });
-                },
-                error: function (response) {
-                    console.error(response);
-                    // Handle error (e.g., show an error message)
-                },
-            });
-        }
-
         document.getElementById('fileInput').addEventListener('change', function () {
             var uploadButton = document.getElementById('uploadButton');
             uploadButton.disabled = this.files.length === 0;

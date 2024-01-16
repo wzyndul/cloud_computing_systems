@@ -82,3 +82,16 @@ def download_blob(user, file_name):
 
     logger.info(f'File "{file_name}" downloaded for user: {user.username.lower()}')
     return response
+
+
+def delete_blob(user, file_name):
+    blob_service_client = BlobServiceClient.from_connection_string(settings.AZURE_STORAGE_CONNECTION_STRING)
+    container_client = blob_service_client.get_container_client(user.username.lower())
+    blob = container_client.get_blob_client(file_name)
+    blob.delete_blob()
+
+    blob_list = container_client.list_blobs(include=['versions'])
+    for blob in blob_list:
+        if blob.name == file_name:
+            blob_client = container_client.get_blob_client(file_name)
+            blob_client.delete_blob(version_id=blob.version_id)
