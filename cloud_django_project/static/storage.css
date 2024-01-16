@@ -2,13 +2,17 @@
     margin-top: 20px;
 }
 
-.storage-container {
+body {
     background: #f3f0f0;
-    border-radius: 10px;
-    padding: 80px;
-    box-shadow: 4px 5px 0px 1px #9fd3c7;
-    overflow: auto;
-    height: 90vh;
+}
+
+.storage-container {
+    /*background: #f3f0f0;*/
+    /*border-radius: 10px;*/
+    /*padding: 80px;*/
+    /*box-shadow: 4px 5px 0px 1px #9fd3c7;*/
+    /*overflow: auto;*/
+    /*height: 90vh;*/
 }
 
 .version-container {
