@@ -8,7 +8,6 @@ from cloud_django_project.forms import UserRegistrationForm, UserLoginForm
 from cloudapp import blob_handler
 from cloudapp.models import UserActivityLog
 from cloudapp.utils import authenticate_user
-from cloudapp.utils import logger
 
 
 def index_page(request):
@@ -26,7 +25,6 @@ def register_user(request):
                 blob_handler.create_blob_container(user)
                 messages.success(request, 'Registration successful.')
                 login(request, user)
-                logger.info(f'New user registered: {user.username}')
                 UserActivityLog.objects.create(username=user, activity='register')
                 return redirect('index_page')
             else:
@@ -37,7 +35,6 @@ def register_user(request):
         except IntegrityError:
             messages.error(request, 'Unsuccessful registration. Username already exists.')
         except Exception as e:
-            messages.error(request, "Internal Server Error. Please try again later.")
             return render(request, 'error_page.html', {'error_message': "Internal Server Error."})
 
     form = UserRegistrationForm()
@@ -54,9 +51,8 @@ def login_user(request):
                 user = authenticate(username=username, password=password)
                 if user:
                     messages.success(request,
-                                    f"You are now logged in as {username}.")
+                                     f"You are now logged in as {username}.")
                     login(request, user)
-                    logger.info(f'User logged in: {username}')
                     UserActivityLog.objects.create(username=user, activity='login')
                     return redirect('index_page')
                 else:
@@ -69,7 +65,6 @@ def login_user(request):
         except ValidationError:
             messages.error(request, "Invalid login form data.")
         except Exception as e:
-            messages.error(request, "Internal Server Error. Please try again later.")
             return render(request, 'error_page.html', {'error_message': "Internal Server Error."})
 
     elif request.method == 'GET':
@@ -85,11 +80,9 @@ def login_user(request):
 def logout_user(request):
     try:
         if request.user.is_authenticated:
-            username = request.user.username
+            UserActivityLog.objects.create(username=request.user, activity='logout')
             logout(request)
             messages.info(request, "You have successfully logged out.")
-            logger.info(f'User logged out: {username}')
-            # UserActivityLog.objects.create(username=username, activity='logout')
             return redirect('index_page')
         else:
             raise PermissionDenied("You are not logged in.")
@@ -101,7 +94,6 @@ def logout_user(request):
         messages.error(request, "You are not logged in.")
         return redirect('login_user')
     except Exception as e:
-        messages.error(request, "Internal Server Error. Please try again later.")
         return render(request, 'error_page.html', {'error_message': "Internal Server Error."})
 
 
@@ -116,7 +108,6 @@ def storage(request):
             messages.error(request, "User not found.")
             return redirect('login_user')
         except Exception as e:
-            messages.error(request, "Internal Server Error. Please try again later.")
             return render(request, 'error_page.html', {'error_message': "Internal Server Error."})
 
     elif request.method == 'POST':
@@ -136,7 +127,6 @@ def storage(request):
             messages.error(request, "User not found.")
             return redirect('login_user')
         except Exception as e:
-            messages.error(request, "Internal Server Error. Please try again later.")
             return render(request, 'error_page.html', {'error_message': "Internal Server Error."})
 
     return render(request, 'storage.html')
@@ -161,7 +151,6 @@ def change_version(request):
             messages.error(request, "User not found.")
             return redirect('login_user')
         except Exception as e:
-            messages.error(request, "Internal Server Error. Please try again later.")
             return render(request, 'error_page.html', {'error_message': "Internal Server Error."})
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
@@ -185,7 +174,6 @@ def download_file(request):
             messages.error(request, "User not found.")
             return redirect('login_user')
         except Exception as e:
-            messages.error(request, "Internal Server Error. Please try again later.")
             return render(request, 'error_page.html', {'error_message': "Internal Server Error."})
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
@@ -209,9 +197,6 @@ def delete_file(request):
             messages.error(request, "User not found.")
             return redirect('login_user')
         except Exception as e:
-            messages.error(request, "Internal Server Error. Please try again later.")
             return render(request, 'error_page.html', {'error_message': "Internal Server Error."})
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
-
-
