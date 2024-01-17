@@ -28,7 +28,8 @@
                                 <form method="GET" action="{% url 'download_file' %}">
                                     {% csrf_token %}
                                     <input type="hidden" name="file_name" value="{{ file_name }}">
-                                    <button type="submit" class="btn btn-secondary btn-version btn-one">Download File</button>
+                                    <button type="submit" class="btn btn-secondary btn-version btn-one">Download File
+                                    </button>
                                 </form>
                                 <form method="POST" action="{% url 'delete_file' %}">
                                     {% csrf_token %}
@@ -38,8 +39,8 @@
                                 </form>
                             </td>
                             <td>
-                                {% if versions %}
-                                    {% for version in versions %}
+                                {% for version in versions %}
+                                    {% if versions|length > 1 %}
                                         {% if version != last_version %}
                                             {# Don't show the last version because last version is current version #}
                                             <div class="version-container">
@@ -54,16 +55,19 @@
                                                     <input type="hidden" name="file_name" value="{{ file_name }}">
                                                     <input type="hidden" name="version_id"
                                                            value="{{ version.version_id }}">
-                                                    <button type="submit" class="btn btn-secondary btn-version btn-two">
+                                                    <button type="submit"
+                                                            class="btn btn-secondary btn-version btn-two">
                                                         Change to this version
                                                     </button>
                                                 </form>
                                             </div>
                                         {% endif %}
-                                    {% endfor %}
-                                {% else %}
-                                    <div>No versions available</div>
-                                {% endif %}
+                                    {% else %} {# If there is only one version (the current version)#}
+                                        <div class="version-container">
+                                            No versions available
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
                             </td>
                         </tr>
                     {% endwith %}
