@@ -133,7 +133,7 @@ LOGGING = {
             'level': 'DEBUG',
             'propagate': False,
         },
-    }
+    },
 }
 
 # Internationalization
