@@ -1,4 +1,6 @@
 from django.contrib.auth import login, authenticate, logout
+from django.core.exceptions import ValidationError, PermissionDenied
+from django.db import IntegrityError
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.contrib import messages
@@ -13,12 +15,10 @@ def index_page(request):
     return render(request, 'index.html')
 
 
-# Registering users
 def register_user(request):
     if request.method == 'POST':
         try:
             form = UserRegistrationForm(request.POST)
-
             if form.is_valid():
                 user = form.save(commit=False)
                 user.username = user.username.lower()
@@ -29,19 +29,21 @@ def register_user(request):
                 logger.info(f'New user registered: {user.username}')
                 UserActivityLog.objects.create(username=user, activity='register')
                 return redirect('index_page')
-
             else:
-                messages.warning(request,'Unsuccessful registration. Invalid information.')
+                messages.warning(request, 'Unsuccessful registration. Invalid information.')
+
+        except ValidationError:
+            messages.error(request, 'Unsuccessful registration. Invalid information.')
+        except IntegrityError:
+            messages.error(request, 'Unsuccessful registration. Username already exists.')
         except Exception as e:
             messages.error(request, "Internal Server Error. Please try again later.")
             return render(request, 'error_page.html', {'error_message': "Internal Server Error."})
-
 
     form = UserRegistrationForm()
     return render(request, 'register.html', {'register_form': form})
 
 
-# Logging in users
 def login_user(request):
     if request.method == 'POST':
         try:
@@ -59,9 +61,13 @@ def login_user(request):
                     return redirect('index_page')
                 else:
                     messages.warning(request, "Invalid username or password.")
-
             else:
                 messages.warning(request, "Invalid username or password.")
+
+        except KeyError:
+            messages.error(request, "Missing username or password.")
+        except ValidationError:
+            messages.error(request, "Invalid login form data.")
         except Exception as e:
             messages.error(request, "Internal Server Error. Please try again later.")
             return render(request, 'error_page.html', {'error_message': "Internal Server Error."})
@@ -76,15 +82,24 @@ def login_user(request):
     return render(request, 'login.html', {'login_form': form})
 
 
-# Logging out users
 def logout_user(request):
     try:
-        username = request.user.username
-        logout(request)
-        messages.info(request, "You have successfully logged out.")
-        logger.info(f'User logged out: {username}')
-        # UserActivityLog.objects.create(username=username, activity='logout')
-        return redirect('index_page')
+        if request.user.is_authenticated:
+            username = request.user.username
+            logout(request)
+            messages.info(request, "You have successfully logged out.")
+            logger.info(f'User logged out: {username}')
+            # UserActivityLog.objects.create(username=username, activity='logout')
+            return redirect('index_page')
+        else:
+            raise PermissionDenied("You are not logged in.")
+
+    except AttributeError:
+        messages.error(request, "User not found.")
+        return redirect('login_user')
+    except PermissionDenied:
+        messages.error(request, "You are not logged in.")
+        return redirect('login_user')
     except Exception as e:
         messages.error(request, "Internal Server Error. Please try again later.")
         return render(request, 'error_page.html', {'error_message': "Internal Server Error."})
@@ -96,17 +111,30 @@ def storage(request):
         try:
             blobs = blob_handler.list_blobs_with_properties(request.user)
             return render(request, 'storage.html', {'blobs': blobs})
+
+        except AttributeError:
+            messages.error(request, "User not found.")
+            return redirect('login_user')
         except Exception as e:
             messages.error(request, "Internal Server Error. Please try again later.")
             return render(request, 'error_page.html', {'error_message': "Internal Server Error."})
+
     elif request.method == 'POST':
         try:
             uploaded_files = request.FILES.getlist('files')
+            if not uploaded_files:
+                raise ValueError("No files uploaded.")
 
             blob_handler.parallel_upload_blob(request.user, uploaded_files)
-
             messages.success(request, f'{len(uploaded_files)} file(s) uploaded successfully.')
             return redirect('storage')
+
+        except ValueError:
+            messages.error(request, "Invalid file(s) selected.")
+            return redirect('storage')
+        except AttributeError:
+            messages.error(request, "User not found.")
+            return redirect('login_user')
         except Exception as e:
             messages.error(request, "Internal Server Error. Please try again later.")
             return render(request, 'error_page.html', {'error_message': "Internal Server Error."})
@@ -120,8 +148,18 @@ def change_version(request):
         try:
             file_name = request.POST.get('file_name')
             version = request.POST.get('version_id')
+            if not file_name or not version:
+                raise ValueError("Missing file name or version ID.")
+
             blob_handler.change_blob_version(request.user, file_name, version)
             return redirect('storage')
+
+        except ValueError:
+            messages.error(request, "Invalid file name or version ID.")
+            return redirect('storage')
+        except AttributeError:
+            messages.error(request, "User not found.")
+            return redirect('login_user')
         except Exception as e:
             messages.error(request, "Internal Server Error. Please try again later.")
             return render(request, 'error_page.html', {'error_message': "Internal Server Error."})
@@ -134,21 +172,42 @@ def download_file(request):
     if request.method == 'GET':
         file_name = request.GET.get('file_name')
         try:
+            if not file_name:
+                raise ValueError("Missing file name.")
+
             response = blob_handler.download_blob(request.user, file_name)
             return response
+
+        except ValueError:
+            messages.error(request, "Invalid file name.")
+            return redirect('storage')
+        except AttributeError:
+            messages.error(request, "User not found.")
+            return redirect('login_user')
         except Exception as e:
             messages.error(request, "Internal Server Error. Please try again later.")
             return render(request, 'error_page.html', {'error_message': "Internal Server Error."})
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
 
+
 @authenticate_user
 def delete_file(request):
     if request.method == 'POST':
         file_name = request.POST.get('file_name')
         try:
+            if not file_name:
+                raise ValueError("Missing file name.")
+
             blob_handler.delete_blob(request.user, file_name)
             return redirect('storage')
+
+        except ValueError:
+            messages.error(request, "Invalid file name.")
+            return redirect('storage')
+        except AttributeError:
+            messages.error(request, "User not found.")
+            return redirect('login_user')
         except Exception as e:
             messages.error(request, "Internal Server Error. Please try again later.")
             return render(request, 'error_page.html', {'error_message': "Internal Server Error."})
