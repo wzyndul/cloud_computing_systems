@@ -1,0 +1,29 @@
+.login-container {
+    background: #f3f0f0;
+    border-radius: 10px;
+    padding: 90px;
+    box-shadow: 4px 5px 0px 1px #9fd3c7;
+    position: relative;
+}
+
+.btn-back {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+}
+
+.text-account {
+    margin-top: 30px;
+}
+
+input[type="text"], input[type="password"] {
+    border-radius: 5px;
+    border: none;
+    box-shadow: inset 0px 0px 4px 1px rgba(197, 205, 214, 1);
+    /*font-size: 1rem;*/
+}
+
+input[type="text"]:focus, input[type="password"]:focus {
+    outline: none;
+    box-shadow: 0 0 5px rgb(197, 205, 214);
+}

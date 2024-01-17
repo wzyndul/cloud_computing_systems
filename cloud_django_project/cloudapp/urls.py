@@ -21,6 +21,9 @@ urlpatterns = [
     path('', views.index_page, name='index_page'),
     path('register/', views.register_user, name='register_user'),
     path('login/', views.login_user, name='login_user'),
+    path('storage/', views.storage, name='storage'),
     path('logout/', views.logout_user, name='logout_user'),
-    path('success/', views.success_page, name='success_page'),
+    path('change_version/', views.change_version, name='change_version'),
+    path('download_file/', views.download_file, name='download_file'),
+    path('delete_file/', views.delete_file, name='delete_file'),
 ]

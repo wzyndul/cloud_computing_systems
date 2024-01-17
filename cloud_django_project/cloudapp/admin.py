@@ -1,3 +1,5 @@
 from django.contrib import admin
+from cloudapp.models import UserActivityLog, FileActivityLog
 
-# Register your models here.
+admin.site.register(UserActivityLog)
+admin.site.register(FileActivityLog)

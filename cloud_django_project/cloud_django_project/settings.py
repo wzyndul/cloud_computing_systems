@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 from crispy_forms import bootstrap
 
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -25,7 +27,8 @@ SECRET_KEY = 'django-insecure-ts562&usn0h#4@ax9s50s^9%xdcvx(dqrjtom&z(%s79j_)z!0
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['cloudappdjango.azurewebsites.net', '127.0.0.1']
+CSRF_TRUSTED_ORIGINS = ['https://cloudappdjango.azurewebsites.net']
 
 AZURE_STORAGE_CONNECTION_STRING = "DefaultEndpointsProtocol=https;AccountName=dataincloud;AccountKey=0e/NsZI/PrDszy3k/5edZzgRR+v+DHOj6plZ0Z/3rmMuXj+QR1k7c4hWvi+SVKQwRGejytsNmR1p+AStWsN23g==;EndpointSuffix=core.windows.net"
 
@@ -39,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'crispy_forms',
+    'django_db_logger',
     # 'crispy_bootstrap5',
     'cloudapp',
 ]
@@ -46,6 +50,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -72,6 +77,8 @@ TEMPLATES = [
     },
 ]
 
+
+
 WSGI_APPLICATION = 'cloud_django_project.wsgi.application'
 
 # Database
@@ -87,6 +94,7 @@ DATABASES = {
         'PORT': '1433',
         'OPTIONS': {
             'driver': 'ODBC Driver 17 for SQL Server',
+            'timeout': 60,
         },
     }
 }
@@ -109,6 +117,25 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Logging
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'db': {
+            'level': 'DEBUG',
+            'class': 'django_db_logger.db_log_handler.DatabaseLogHandler'
+        },
+    },
+    'loggers': {
+        'db_logger': {
+            'handlers': ['db'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+    },
+}
+
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
@@ -123,7 +150,14 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
+
+STATIC_URL = '/static/'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -137,6 +171,5 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
-STATIC_URL = 'static/'
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"

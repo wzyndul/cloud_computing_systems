@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Storage{% endblock %}
+
+{% block content %}
+    <link rel="stylesheet" type="text/css" href="{% static 'storage.css' %}">
+    <div class="storage-container mt-lg-5">
+        <a class="btn btn-primary btn-three"
+           href="{% url 'index_page' %}">Back</a>
+        <h2 class="text-center mb-4">Stored Files</h2>
+        {% if blobs %}
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">File Description</th>
+                    <th scope="col">Previous Versions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for file_name, versions in blobs.items %}
+                    {% with last_version=versions|last %}
+                        <tr>
+                            <td class="file-name">
+                                File Name: {{ file_name }} <br>
+                                Size: {{ last_version.size }} bytes<br>
+                                Last Modified: {{ last_version.last_modified }}<br>
+                                Version ID: {{ last_version.version_id }}<br>
+                                <form method="GET" action="{% url 'download_file' %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="file_name" value="{{ file_name }}">
+                                    <button type="submit" class="btn btn-secondary btn-version btn-one">Download File
+                                    </button>
+                                </form>
+                                <form method="POST" action="{% url 'delete_file' %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="file_name" value="{{ file_name }}">
+                                    <button type="submit" class="btn btn-secondary btn-version btn-one">Delete file
+                                    </button>
+                                </form>
+                            </td>
+                            <td>
+                                {% for version in versions %}
+                                    {% if versions|length > 1 %}
+                                        {% if version != last_version %}
+                                            {# Don't show the last version because last version is current version #}
+                                            <div class="version-container">
+                                                Size: {{ version.size }}
+                                                bytes<br>
+                                                Last
+                                                Modified: {{ version.last_modified }}<br>
+                                                Version
+                                                ID: {{ version.version_id }}<br>
+                                                <form method="POST" action="{% url 'change_version' %}">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="file_name" value="{{ file_name }}">
+                                                    <input type="hidden" name="version_id"
+                                                           value="{{ version.version_id }}">
+                                                    <button type="submit"
+                                                            class="btn btn-secondary btn-version btn-two">
+                                                        Change to this version
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        {% endif %}
+                                    {% else %} {# If there is only one version (the current version)#}
+                                        <div class="version-container">
+                                            No versions available
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                            </td>
+                        </tr>
+                    {% endwith %}
+                {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p class="text-center">No files available.</p>
+        {% endif %}
+
+
+
+
+        <h3 class="mt-4">Upload</h3>
+        <form method="POST" enctype="multipart/form-data"
+              action="{% url 'storage' %}">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="fileInput" class="form-label">Select
+                    File(s):</label>
+                <input type="file" name="files" id="fileInput"
+                       class="form-control"
+                       multiple>
+            </div>
+            <button id="uploadButton" type="submit" disabled
+                    class="btn btn-secondary btn-two">Upload
+            </button>
+        </form>
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script>
+        document.getElementById('fileInput').addEventListener('change', function () {
+            var uploadButton = document.getElementById('uploadButton');
+            uploadButton.disabled = this.files.length === 0;
+        });
+    </script>
+
+{% endblock %}
