@@ -34,7 +34,7 @@ def register_user(request):
             messages.error(request, 'Unsuccessful registration. Invalid information.')
         except IntegrityError:
             messages.error(request, 'Unsuccessful registration. Username already exists.')
-        except Exception as e:
+        except Exception:
             return render(request, 'error_page.html', {'error_message': "Internal Server Error."})
 
     form = UserRegistrationForm()
@@ -64,7 +64,7 @@ def login_user(request):
             messages.error(request, "Missing username or password.")
         except ValidationError:
             messages.error(request, "Invalid login form data.")
-        except Exception as e:
+        except Exception:
             return render(request, 'error_page.html', {'error_message': "Internal Server Error."})
 
     elif request.method == 'GET':
@@ -93,7 +93,7 @@ def logout_user(request):
     except PermissionDenied:
         messages.error(request, "You are not logged in.")
         return redirect('login_user')
-    except Exception as e:
+    except Exception:
         return render(request, 'error_page.html', {'error_message': "Internal Server Error."})
 
 
@@ -107,7 +107,7 @@ def storage(request):
         except AttributeError:
             messages.error(request, "User not found.")
             return redirect('login_user')
-        except Exception as e:
+        except Exception:
             return render(request, 'error_page.html', {'error_message': "Internal Server Error."})
 
     elif request.method == 'POST':
@@ -126,7 +126,7 @@ def storage(request):
         except AttributeError:
             messages.error(request, "User not found.")
             return redirect('login_user')
-        except Exception as e:
+        except Exception:
             return render(request, 'error_page.html', {'error_message': "Internal Server Error."})
 
     return render(request, 'storage.html')
@@ -150,7 +150,7 @@ def change_version(request):
         except AttributeError:
             messages.error(request, "User not found.")
             return redirect('login_user')
-        except Exception as e:
+        except Exception:
             return render(request, 'error_page.html', {'error_message': "Internal Server Error."})
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
@@ -173,7 +173,7 @@ def download_file(request):
         except AttributeError:
             messages.error(request, "User not found.")
             return redirect('login_user')
-        except Exception as e:
+        except Exception:
             return render(request, 'error_page.html', {'error_message': "Internal Server Error."})
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
@@ -196,7 +196,7 @@ def delete_file(request):
         except AttributeError:
             messages.error(request, "User not found.")
             return redirect('login_user')
-        except Exception as e:
+        except Exception:
             return render(request, 'error_page.html', {'error_message': "Internal Server Error."})
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
