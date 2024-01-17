@@ -83,7 +83,7 @@ def logout_user(request):
         logout(request)
         messages.info(request, "You have successfully logged out.")
         logger.info(f'User logged out: {username}')
-        UserActivityLog.objects.create(username=request.user, activity='logout')
+        # UserActivityLog.objects.create(username=username, activity='logout')
         return redirect('index_page')
     except Exception as e:
         messages.error(request, "Internal Server Error. Please try again later.")
