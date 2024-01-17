@@ -26,7 +26,13 @@ body {
     background-color: #ececec;
 }
 
-.btn-version {
+.btn.btn-secondary.btn-version.btn-two {
     margin-top: 5px;
     margin-left: 50px;
 }
+
+.btn.btn-secondary.btn-version.btn-one {
+    margin-top: 5px;
+}
+
+
