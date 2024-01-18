@@ -62,3 +62,7 @@ body {
 .link:hover {
     color: #ab75bc;
 }
+
+.alert-error {
+    background-color: #ffe3e3;
+}
