@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'crispy_forms',
     'django_db_logger',
-    # 'crispy_bootstrap5',
+    'corsheaders',
     'cloudapp',
 ]
 
@@ -56,6 +56,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'cloud_django_project.urls'
@@ -173,3 +174,8 @@ AUTHENTICATION_BACKENDS = [
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",  
+]
+
