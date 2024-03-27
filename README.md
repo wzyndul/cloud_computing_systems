@@ -1,6 +1,6 @@
-<h1>Cloud Storage Web Application</h1>
+<h1 align="center" id="title">Cloud Storage Web Application</h1>
 
-<p>This is a cloud storage website built with Django and Python (planning to add frontend in React). Made for the Cloud Computing Systems course at TUL.</p>       
+<p id="description">This is a cloud storage website built with Django and Python (planning to add frontend in React). Made for the Cloud Computing Systems course at TUL.</p>       
 
 <h2>🧐 Features</h2>
 
@@ -13,7 +13,9 @@ Here're some of the project's best features:
 * Configured to handle CORS, allowing the app to safely and securely handle requests from different origins
 * Responsive and minimalistic UI built with HTML, CSS, and JavaScript (using jQuery and Select2 for enhanced user experience)
 
-<h2>🖥️ Technologies Used</h2>
+<h2>💻 Built with</h2>
+
+Technologies used in the project:
 
 * Django
 * Python
@@ -22,7 +24,7 @@ Here're some of the project's best features:
 * Microsoft Azure
 * React (frontend - SOON)
 
-<h2>🚀 Getting Started</h2>
+<h2>🛠️ Installation Steps:</h2>
 
 To get started with this project, clone the repository and install the dependencies:
 
