@@ -6,7 +6,7 @@ certifi==2023.11.17
 cffi==1.16.0
 charset-normalizer==3.3.2
 cryptography==41.0.7
-Django==4.2.9
+Django==4.2.11
 django-crispy-forms==2.1
 django-db-logger==0.1.13
 idna==3.6
