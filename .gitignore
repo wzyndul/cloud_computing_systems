@@ -2,6 +2,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
+cloud_computing_systems/cloud_django_project/cloud_django_project/settings.py
 
 # C extensions
 *.so

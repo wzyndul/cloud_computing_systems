@@ -86,16 +86,12 @@ WSGI_APPLICATION = 'cloud_django_project.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'mssql',
-        'NAME': 'cloudapp',
-        'USER': 'cloudapp',
-        'PASSWORD': '5Sv^44P]d4',
-        'HOST': 'cloudappdjango.database.windows.net',
-        'PORT': '1433',
-        'OPTIONS': {
-            'driver': 'ODBC Driver 17 for SQL Server',
-            'timeout': 60,
-        },
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'clouddjango',
+        'USER': 'wojciech',
+        'PASSWORD': 'cloudAPPchmury1',
+        'HOST': 'postgresservercloudapp.postgres.database.azure.com',
+        'PORT': '5432',
     }
 }
 

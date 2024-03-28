@@ -9,3 +9,5 @@
 
 # Django static files
 /staticfiles/
+# GitHub Copilot persisted chat sessions
+/copilot/chatSessions
