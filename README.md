@@ -2,7 +2,8 @@
 
 <p id="description">This is a cloud storage website built with Django and Python (planning to add frontend in React). Made for the Cloud Computing Systems course at TUL.</p>    
 
-
+<img src="./cloud_django_project/img/home.png" alt="Home" width="100%">
+<img src="./cloud_django_project/img/files.png" alt="Files" width="100%">
 
 <h2>🧐 Features</h2>
 
