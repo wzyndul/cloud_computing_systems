@@ -1,6 +1,7 @@
 <h1 align="center" id="title">Cloud Storage Web Application</h1>
 
-<p id="description">This is a cloud storage website built with Django and Python (planning to add frontend in React). Made for the Cloud Computing Systems course at TUL.</p>    
+<p id="description">This is a cloud storage website built with Django and Python (planning to add frontend in React). Made for the Cloud Computing Systems course at TUL. To enter the website, just open the link: <a href="https://cloudappdjango.azurewebsites.net/">Cloud Storage Website</a></p>    
+
 
 <img src="./cloud_django_project/img/home.png" alt="Home" width="100%">
 <img src="./cloud_django_project/img/files.png" alt="Files" width="100%">
